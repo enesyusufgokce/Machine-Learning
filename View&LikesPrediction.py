@@ -56,3 +56,7 @@ w_final, b_final, j_hist, w_b_hist = gradient_descent(watcher_train, likes_train
                                                       compute_gradient, 100000)
 
 print("The number of likes in millions for the song, which has been watched 8.367 billion times, is as follows: ", w_final * 8.367 + b_final)
+print("The number of likes in millions for the song, which has been watched 2.566 billion times, is as follows: ", w_final * 2.566 + b_final)
+print("The number of likes in millions for the song, which has been watched 8.004 billion times, is as follows: ", w_final * 8.004 + b_final)
+print("The number of likes in millions for the song, which has been watched 0.596 billion times, is as follows: ", w_final * 0.596 + b_final)
+print("The number of likes in millions for the song, which has been watched 1.121 billion times, is as follows: ", w_final * 1.121 + b_final)
