@@ -15,4 +15,4 @@ prediction_init = model.predict(scaler.transform([
                                                  [33690,5]
                                                  ]))
 prediction = int(prediction_init[0][0])
-print("Estimated number of likes for a video viewed 33690 times and uploaded 5 yeard ago is:",prediction)
+print("Estimated number of likes for a video viewed 33690 times and uploaded 5 years ago is:", prediction)
