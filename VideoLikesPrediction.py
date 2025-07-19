@@ -2,11 +2,11 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
 
-datas = pd.read_csv("likes_training_data.csv")
+data = pd.read_csv("likes_training_data.csv")
 model = LinearRegression()
 
-x = datas[["views", "video_age"]]
-y = datas[["likes"]]
+x = data[["views", "video_age"]]
+y = data[["likes"]]
 
 scaler = StandardScaler()
 scaled_x = scaler.fit_transform(x)    # data were normalized by using z-score normalization
