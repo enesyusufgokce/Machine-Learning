@@ -9,7 +9,7 @@ x = datas[["views", "video_age"]]
 y = datas[["likes"]]
 
 scaler = StandardScaler()
-scaled_x = scaler.fit_transform(x)
+scaled_x = scaler.fit_transform(x)    # data were normalized by using z-score normalization
 model.fit(scaled_x,y)
 prediction_init = model.predict(scaler.transform([
                                                  [33690,5]
