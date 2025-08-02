@@ -5,7 +5,7 @@ import pandas as pd
 data = pd.read_csv("likes_training_data_realistic.csv")
 model = LinearRegression()
 
-x = data[["views", "video_age", "video_duration(minute)"]]
+x = data[["views", "video_age(years)", "video_duration(minutes)"]]
 y = data[["likes"]]
 
 polynomial_funct = PolynomialFeatures(degree=3)
