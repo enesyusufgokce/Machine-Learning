@@ -5,7 +5,7 @@ import pandas as pd
 
 data = pd.read_csv("likes_training_data_realistic.csv")
 model = Ridge(alpha=1000000)    # High degree coefficients were penalized to make the model more generalizable
-                                # because of alpha is so high, the model is underfitting
+                                # but because of alpha is so high, the model is underfitting
 x = data[["views", "video_age(years)", "video_duration(minutes)"]]
 y = data["likes"]
 
@@ -45,4 +45,5 @@ print(prediction4)
 print(prediction5)
 print(prediction6)
 print(prediction7)
+
 print(prediction8)
