@@ -32,3 +32,6 @@ print("An animal which has features as Weight:{} kg, Lifespan:{} years, HeartRat
       "Gestation:{} days is a".format(prediction_data[0][0],prediction_data[0][1],
                                  prediction_data[0][2], prediction_data[0][2]), prediction)
 
+# logistic regression'a da polynomial features eklenebilir
+# decision boundary zig zag lı hale gelmişse overfitting durumunu önlemek için regularization kullanılarak
+# katsayılar penalize edilebilir. linear regressionda olduğu gibi
