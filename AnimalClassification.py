@@ -28,7 +28,7 @@ model = Sequential([
 ])
 
 model.compile(loss=SparseCategoricalCrossentropy(from_logits=True),optimizer=tf.keras.optimizers.Adam())
-# Adam(learning_rate=0.001) dersek yine aynı. çünkü keras, learning rate için varsayılan olarak zaten bu değeri kullanıyoo
+# Adam(learning_rate=0.001) dersek yine aynı. çünkü keras, learning rate için varsayılan olarak zaten bu değeri kullanıyo
 
 model.fit(x_scaled, y_encoded, epochs=200)
 
@@ -43,5 +43,5 @@ probability = tf.nn.softmax(logit)
 print(probability)
 
 prediction_prob_index = np.argmax(probability)   # prediction list deki en büyük değeri tutan indexi verir
-prediction = encoder.classes_[prediction_prob_index]   # LabelEncoder'ın alfabetik sıraladığı stringlerden yukraıda bulduğu indexteki stringi verir
+prediction = encoder.classes_[prediction_prob_index]   # LabelEncoder'ın alfabetik sıraladığı stringlerden yukarıda bulduğu indexteki stringi verir
 print(prediction)
