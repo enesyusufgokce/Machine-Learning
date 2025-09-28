@@ -38,7 +38,7 @@ model = Sequential([
 # loss and cost function
 model.compile(loss=BinaryCrossentropy(from_logits=True), optimizer=tf.keras.optimizers.Adam(), metrics=["accuracy"])
 # ham puan veririz, loss, sigmoidi içeride uygular [eğitimde bu.
-# tahmin kısmında olasılık vermesi için 36.satırdaki ayarlamayı yaptık. çünkü output layerde linear activation var]
+# tahmin kısmında olasılık vermesi için tf.nn.sigmoid yaptık. çünkü output layerde linear activation var]
 # (from logits demeyip output avtivation'u logistic yaparsak, loss fonksiyonuna doğrudan öncesinde hesaplanan olasılık gider, ham sayısal değer değil)
 # sayısal yuvarlamayı önleyip daha doğru numeric değer için output layer activation'ı sigmoidden linear'a çevirdik, compile kısmında
 
