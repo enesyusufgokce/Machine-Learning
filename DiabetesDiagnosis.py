@@ -1,7 +1,6 @@
 from xgboost import XGBClassifier
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.metrics import accuracy_score
 
@@ -27,15 +26,10 @@ x_train, x_temp, y_train, y_temp = train_test_split(x, y, test_size=0.4, random_
 x_cv, x_test, y_cv, y_test = train_test_split(x_temp, y_temp, test_size=0.5, random_state=1)
 del x_temp, y_temp
 
-scaler = StandardScaler()
-x_train_scaled = scaler.fit_transform(x_train)
-x_cv_scaled = scaler.transform(x_cv)
-x_test_scaled = scaler.transform(x_test)
-
 model = XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, subsample=0.4, colsample_bytree=0.6, random_state=1)
-model.fit(x_train_scaled, y_train, eval_set=[(x_train_scaled, y_train), (x_cv_scaled, y_cv)])
+model.fit(x_train, y_train, eval_set=[(x_train, y_train), (x_cv, y_cv)])
 
-prediction = model.predict(x_test_scaled)
+prediction = model.predict(x_test)
 
 accuracy = accuracy_score(y_test, prediction)
 print("model accuracy is:",accuracy)
