@@ -1,0 +1,182 @@
+1
+-split the dataset as training set 60% cross validation set 20% and test set 20%
+
+2
+-training set
+Öğrencinin ders çalıştığı kitap gibi düşün.
+Model parametreleri (𝑤,b) bu verilerden ayarlanır.
+
+-cross-validation set
+Bu veriler öğrenme için kullanılmaz, sadece model seçmek için kullanılır.
+Öğrencinin ders çalıştıktan sonra yaptığı deneme sınavı gibi düşün.
+Asıl kararları burada veriyoruz. Yani “bu model fazla ezberlemiş (overfit)” mi,
+ “bu model çok basit (underfit)” mi diye buradan anlıyoruz.
+
+ -test set
+ Öğrencinin gerçek final sınavı gibi düşün.
+Modeli eğittik, validation ile en iyi modeli seçtik → en sonunda test setinde final performansı raporlarız
+*Tek seferlik kullanılır → sürekli bakarsak test seti de “ezberlenmiş” olur.
+
+Eğitim → öğrenmek için.
+Validation → modeli seçmek için.
+Test → başarıyı ölçmek için.
+
+3
+high bias (underfit) -> J train is high, Jcv is high     J train in high olması, Jcv nin de high olduğunu anlamamızı sağlaar
+just right  -> J train is low, Jcv is low
+high variance (overfit) -> J train is low, Jcv is high
+
+Jtrain → Eğitim verisi üzerinde cost. Model ders kitabındaki soruları çözerken yaptığı hata.
+Jcv → Validation verisi (cross-validation set) üzerinde cost. Modelin deneme sınavında (validation set) yaptığı hata.
+Jtest → En son test seti üzerinde cost. Modelin gerçek sınavda (test set) yaptığı hata.
+
+regularization parameter lambda artarsa penalizing çok olur, underfit(high bias) olur Jtrain ve Jcv fazla,
+lambda çok az olursa overfit(high variance) durumu kalır Jtrain az Jcv fazla
+
+4
+where the data is sometimes noisy, it is useful to establish a baseline level of performance
+(like human level performance).(like speech recognition example)
+Ex: for the first example 10.8% - 10.6% = 0.2% then we say the model is fitting well to the training data
+
+baseline performance        : 10.6%             10.6%               10.6%
+training error (Jtrain)     : 10.8%             15.0%               15.0%
+cross validation error (Jcv): 14.8%             15.5%               19.7%
+                           high variance       high bias    high bias & high variance
+
+bias: Modelin ortalama tahmininin gerçek fonksiyondan ne kadar uzak olduğunu ölçer
+variance: Modelin tahminlerinin farklı eğitim setleri arasında ne kadar değiştiğini ölçer
+
+5
+training set size'ını artırdıkça modelin ezberlemesi zorlaşır, genelleme yeteneği artar. o yüzden training set size
+arttıkça Jcv azalır çünkü overfit (high variance) ihtimali gitgide azalır
+
+training set size arttıkça Jtrain artar çünkü modelin tüm noktalardan geçiyor olması giderek zorlaşır. ör: 2 tane olsa
+düz çizgi ile Jtrain yani training error 0 olur ama 10 tane olsa her birine tam tamına uyamayacağı için genelleme
+yapmak zorunda o yüzden Jtrain artmaya başlar
+
+high bias varsa baseline level performance'a ulaşması için daha çok data eklemek işe yaramaz. Jtrain ve Jcv flatten
+olur ve hala baseline level performance ile arasında büyük bir boşluk vardır ve yeni data eklemek bu mesafeyi kısaltamaz
+çünkü baseline level, flatten olduğu yerin aşağısındadır.
+high variance varsa daha çok data eklemek işe yarar. çünkü baseline level, Jtrain ile Jcv nin arasındadır ve data
+ekledikçe bu noktaya yaklaşarak flatten olur.
+
+Önemli: Bu validation fold ağırlıkları değiştirmez, yani model burada doğrudan öğrenmez. Ama:
+Eğer hyperparameter tuning yapıyorsan, CV sonuçlarına göre learning rate, layer sayısı gibi ayarlar değiştirirsin.
+Bu ayarlamalar dolaylı olarak modelin öğrenme sürecini etkiler.
+CV validation fold → ağırlıkları güncellemez ama model seçim/ayarlama sürecinde kullanılır. ayar yapma kısmı. e göre
+Test set → hiçbir ayarlama veya seçim için kullanılmaz, sadece performans ölçer
+Test sete göre ayarlama yaparsak ne olur?
+Eğer test loss/accuracy’yi görüp manuel olarak hyperparametreleri değiştirirsen → model test setten öğrenmiş gibi olur.
+Bu yüzden test set kesinlikle eğitim veya tuning için kullanılmaz.
+backpropagation
+
+train:                  forward propagation & back propagation(updates the weights of the model)
+cross validation:       forward propagation
+test:                   forward propagation
+
+6
+debugging a learning algorithm:
+- get more training examples          fixes high variance
+- try smaller sets of features        fixes high variance
+- try getting additional features     fixes high bias
+- try adding polynomial features      fixes high bias
+- try decreasing lambda               fixes high bias
+- try increasing lambda               fixes high variance
+
+to fix high bias, make the model more powerful or give it more flexibility
+to fix high variance, get more training data or simplify the model
+
+7
+large neural networks are low bias machines
+
+does it do well on the training set? if no, use bigger neural network
+if yes, does it do well on the cross validation set? if no, add more data
+if yes, Done!
+
+a large neural network will usually do as well or better than
+a smaller one so long as regularization is chosen appropriately
+
+eğitim seti çok küçük değilse, neural networkler, especially large neural networks düşük bias’lıdır
+
+if there is high bias, compare the training error to the baseline level of performance
+if there is high variance, compare the cross validation error to the training error
+
+8
+Iterative loop of ml development
+1-choose architecture(model, data, hyperparameters, etc.)
+2-train model
+3-diagnostics(bias, variance and error analysis)
+
+9
+Error analysis
+manually examine 100 examples and categorise them based on common traits
+model, kasıtlı yazım hatalarını çok iyi çözebiliyordur ama bu, spam olan emaillerin sadece %3 ünü kapsıyordur.
+o yüzden manuel error analysis yaparız. bias, variance den sonra 2. olarak
+
+pharma                                  21    more data, features
+deliberate misspellings                 3
+unusual email routing                   7
+steal passwords                         18    more data, features
+spam message in embedded image          5
+-this may give inspiration what might be useful to try next
+
+8
+Adding data
+add more data of the types where error analysis has indicated it might help
+data augmentation: modifying an existing training example to create a new training example ex: A yı yan çevir,
+blurla, büyüt, küçült, simetriğini al...
+A ya ızgaralı üzerindeki gibi distortion(çarpıtma) yap.
+ses için: noisy background (crowd, car), audio on bad cellphone connection...
+not: distortion introduced should be representation of the type of noise/distortions in the test set
+not: usually does not help to add purely random/meaningless noise to your data. ex: Eğer doğada karşılaşabileceğin
+bir bozulmayı (bulanıklık, ışık farkı, sensör gürültüsü) simüle ediyorsak faydalı
+Eğer sadece rastgele buzulmalar ekliyorsan anlamsız, zararlı
+data synthesis: using artificial data inputs to create a new training example ex: farklı fontlarda rastgele harfler
+yaz(with different colors, different contrast etc.) ve screenshot al ve bunu synthetic data olarak kullan
+
+AI = Code + Data
+conventional model-centric approach: focus on code
+data centric approach: focus on data
+
+9
+Transfer learning
+belirli bir task için elimizde yeteri kadar training data olmadığında başka verilerle bir model eğitip, o modelin
+parametrelerini, istediğimiz modele uygulayarak modeli daha zeki hale getirip az training data ile daha verimli bir
+model kurmayı amaçlarız. output layer units leri istediğimiz outputa uygun ayarlarız.
+option1: only train output layers parameters
+-önceden eğitilmiş parametreleri dondurursun. çok az data olsa bile overfitting yapmaz,
+ çünkü milyonlarca parametreyi oynatmıyoz. ama uyum sınırlı olabilir
+option2: train all parameters
+-başlangıç noktası olarak yine önceden eğitilmiş parametreleri alırsın,
+ama bu sefer hepsini tekrar eğitmeye izin verirsin
+model, bizim taskımıza daha fazla özelleşebilir, az veri varsa overfitting riski yüksek (her parametreyi ayarlıyoz)
+her parametreyi ayarlıyoz ama zaten iyi bir noktadan başlayarak yapıyoruz bunu, bizim verimize göre ince ayar yapılıyor
+training set çok azsa option1, biraz daha fazlaysa option2 daha iyi olur.
+(ama her ikisi de yetersizmiş ki transfer learning yapıyoz)
+step1 -> supervised pretraining   step2 -> fine tuning
+100 lerce, 1000 lerce veri varsa 1 milyon ile supervised pretraining yap, sonra o 100 lerce 1000 lerce datayla
+fine tuning yap.
+ama bunu zaten yapıp internete yükleyenler var. onların pretrained modellerini al, output layeri kendi istediğine
+göre ayarla, option1 ya da option2 ile o zaten ileri götürülmüş olan modeli kendi datanla eğit.
+pretrained modeli hazır al, sonrasında kendin evinde güzel güzel fine tuning yap
+
+pretirained model ile same input type kullanmamız gerek. mesela pretrained imagede kenar, köşe, eğim, basic shapes
+falan öğreniyo ve bizim handwritten diğit de de kenar, köşe, shape var.
+
+bu yöntem her zaman işe yaramaz ama çok yardımcı olabilir
+
+10
+Full cycle of a machine learning project
+scope project      ->      collect data      ->      train model     ->      deploy in production
+(define project)  (define and collect data)  (training, error analysis   (deploy, monitor and maintain system)
+                                              & iterative improvement)
+train model'den collect data'ya, deploy'dan train model'e ya da deploy'dan collect data'ya dönmen gerekebilir
+
+deployment:
+inference server (inside) ML model ----->    <----- Mobile app
+             inference(text transcript)(y^)   API call (audio clip)(x)
+-ensure reliable and efficient products
+-scaling
+-logging
+-system monitoring
+-model updates
