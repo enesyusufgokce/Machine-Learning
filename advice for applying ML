@@ -1,6 +1,6 @@
 1
 -split the dataset as training set 60% cross validation set 20% and test set 20%
-- If there is not enough data 70 - 15 - 15 diyebilirsin, şayet veri fazlaysa train'i daha da artırabilirsin, 80 i falan geçebilir durumuna göre
+- If there is not enough data 70 - 15 - 15 diyebilirsin, şayet veri fazlaysa train'i daha da artırabilirsin, 80'i, 90'ı falan geçebilir durumuna göre
 
 
 2
@@ -183,3 +183,4 @@ inference server (inside) ML model ----->    <----- Mobile app
 -system monitoring
 
 -model updates
+
