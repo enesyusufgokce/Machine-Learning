@@ -12,6 +12,10 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.regularizers import l2
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+from tensorflow.keras.callbacks import EarlyStopping
+
+
 
 data = pd.read_csv("animal_species.csv")
 
@@ -37,13 +41,38 @@ model = Sequential([
     Dense(units = 16, activation = "relu", kernel_regularizer =l2(0.0001)),
     Dense(units = 10, activation = "linear", kernel_regularizer=l2(0.0001))
 ])
+# Tahmin edilecek 10 class olduğu için output layerde 10 unit bulunur. Her unit in belirli bir class ı temsil
+# edebilmesi, SparseCategoricalCrossentropy fonksiyonunun, label encoding den elde edilen label ları doğrudan output
+# layerdeki nöronların indeksleriyle eşleştirmesinden kaynaklanıyor
 
-model.compile(loss=SparseCategoricalCrossentropy(from_logits=True),optimizer=tf.keras.optimizers.Adam(), metrics=["accuracy"])
-# Adam(learning_rate=0.001) dersek yine aynı. çünkü keras, learning rate için varsayılan olarak zaten bu değeri kullanıyo
 
-model.fit(x_train_scaled, y_train, epochs=230, validation_data=(x_cv_scaled, y_cv))
+# hesaplama hızı ve vanishing gradient durumunu önlemel için hidden layerlerde relu activation function'ı kullandık
+
+# her bir neuronun activation functionundaki weightler random initialization ile başlatıldığı için bir layerdeki aynı input vektörünü
+# alan nöronların aynı sonucu üretmesi önlenip ve farklı featureler keşfetmesi sağlanıyor
+
+model.compile(
+    loss=SparseCategoricalCrossentropy(from_logits=True),
+    optimizer=tf.keras.optimizers.Adam(),
+    metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
+)
+# yukarıda label encoder kullandığımız için loss fonksiyonunu SparseCategoricalCrossentropy olarak seçtik
+
+early_stopping = EarlyStopping(
+    monitor='val_loss',      # Takip edilecek değer (Doğrulama kaybı)
+    patience=15,             # 15 epoch boyunca hata düşmezse durdur
+    mode='min',              # monitor değerinin azalmasını bekliyoruz
+    restore_best_weights=True # Durduğunda, hatanın en düşük olduğu andaki ağırlıkları yükle
+)
+
+model.fit(x_train_scaled, y_train, epochs=230, validation_data=(x_cv_scaled, y_cv), callbacks=[early_stopping])
 
 model.evaluate(x_test_scaled, y_test)   # see the accuracy (indicated in the compile part) and the loss of the test set
+
+# statistical report (Precision, Recall, F1-Score, Support)
+y_test_probs = model.predict(x_test_scaled)
+y_test_predict_idx = np.argmax(y_test_probs, axis=1)
+print(classification_report(y_test, y_test_predict_idx, target_names=encoder.classes_))
 
 animal_data = np.array([
                        [0.54,24.3,6.4,328,6.6,12.9,0.014,12.0],
@@ -51,21 +80,19 @@ animal_data = np.array([
                        [3.5, 50, 14, 110, 12, 25, 0.1, 14],
                        [2, 40, 9, 180, 8, 25, 0.05, 12],
                        [60, 90, 15, 70, 10, 40, 3, 8],
-                       [0.5, 25, 6, 350, 5, 10, 0.02, 14],
-                       [8, 60, 12, 100, 15, 30, 0.5, 9],
-                       [7.67,37.7,14.9,90,17.1,23.0,0.314,14.0],
-                       [14.68,52.0,13.0,107,20.7,25.5,0.537,12.9],
-                       [3.61,26.0,16.0,165,12.4,14.1,0.119,11.9],
-                       [3.92,27.1,14.2,125,7.3,11.3,0.106,11.6]
                        ])
 
 animal_data_scaled = scaler.transform(animal_data)
 
-logit = model(animal_data_scaled)
+logit = model.predict(animal_data_scaled)
 probability = tf.nn.softmax(logit)
 print(probability)       # sum of the probabilities is 1
 
 for i in range(len(probability)):
     prediction_prob_index = np.argmax(probability[i])   # prediction list deki en büyük değeri tutan indexi verir
-    prediction = encoder.classes_[prediction_prob_index]   # LabelEncoder'ın alfabetik sıraladığı stringlerden yukarıda bulduğu indexteki stringi verir
+    prediction = encoder.classes_[prediction_prob_index]   # LabelEncoder'ın alfabetik sıraladığı stringlerden yukarıda bulduğu indexteki stringi veriyor
     print(prediction)
+
+#NOTE:
+# Overfitting/underfitting control was performed by monitoring the loss and accuracy values in the compile stage
+# Detailed performance metrics of the model (Precision, Recall, F1) were computed using the test data after training
