@@ -25,15 +25,15 @@ y = data["Species"]
 encoder = LabelEncoder()  # LabelEncoder stringleri alfabetik sıraya göre indexler
 y_encoded = encoder.fit_transform(y)
 
-# 60% train, 20% cross validation, 20% test split
+# 60% train, 20% validation, 20% test split
 x_train, x_temp, y_train, y_temp = train_test_split(x, y_encoded, test_size=0.4, random_state=1)
-x_cv, x_test, y_cv, y_test = train_test_split(x_temp, y_temp, test_size=0.5, random_state=1)
+x_val, x_test, y_val, y_test = train_test_split(x_temp, y_temp, test_size=0.5, random_state=1)
 del x_temp, y_temp
 
 scaler = StandardScaler()
 x_train_scaled = scaler.fit_transform(x_train)    # fit and transform. learn the parameters according to x_train and transform it by using this learned parameters
-x_cv_scaled = scaler.transform(x_cv)              # just use the learned parameters to transform the x_cv
-x_test_scaled = scaler.transform(x_test)          # same as x_cv. just transform, to prevent data leaking
+x_val_scaled = scaler.transform(x_val)            # just use the learned parameters to transform the x_val
+x_test_scaled = scaler.transform(x_test)          # same as x_val. just transform, to prevent data leaking
 
 
 model = Sequential([
@@ -46,7 +46,7 @@ model = Sequential([
 # layerdeki nöronların indeksleriyle eşleştirmesinden kaynaklanıyor
 
 
-# hesaplama hızı ve vanishing gradient durumunu önlemel için hidden layerlerde relu activation function'ı kullandık
+# hesaplama hızı ve vanishing gradient durumunu önlemel için hidden layerlerde sigmoid yerine relu activation function'ı kullandık
 
 # her bir neuronun activation functionundaki weightler random initialization ile başlatıldığı için bir layerdeki aynı input vektörünü
 # alan nöronların aynı sonucu üretmesi önlenip ve farklı featureler keşfetmesi sağlanıyor
@@ -59,13 +59,13 @@ model.compile(
 # yukarıda label encoder kullandığımız için loss fonksiyonunu SparseCategoricalCrossentropy olarak seçtik
 
 early_stopping = EarlyStopping(
-    monitor='val_loss',      # Takip edilecek değer (Doğrulama kaybı)
+    monitor='val_loss',      # Takip edilecek değer (validation loss)
     patience=15,             # 15 epoch boyunca hata düşmezse durdur
     mode='min',              # monitor değerinin azalmasını bekliyoruz
     restore_best_weights=True # Durduğunda, hatanın en düşük olduğu andaki ağırlıkları yükle
 )
 
-model.fit(x_train_scaled, y_train, epochs=230, validation_data=(x_cv_scaled, y_cv), callbacks=[early_stopping])
+model.fit(x_train_scaled, y_train, epochs=230, validation_data=(x_val_scaled, y_val), callbacks=[early_stopping])
 
 model.evaluate(x_test_scaled, y_test)   # see the accuracy (indicated in the compile part) and the loss of the test set
 

@@ -23,11 +23,11 @@ x = data_encoded.drop("diagnosed_diabetes", axis=1)
 y = data_encoded["diagnosed_diabetes"]
 
 x_train, x_temp, y_train, y_temp = train_test_split(x, y, test_size=0.4, random_state=1)
-x_cv, x_test, y_cv, y_test = train_test_split(x_temp, y_temp, test_size=0.5, random_state=1)
+x_val, x_test, y_val, y_test = train_test_split(x_temp, y_temp, test_size=0.5, random_state=1)
 del x_temp, y_temp
 
 model = XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, subsample=0.4, colsample_bytree=0.6, random_state=1)
-model.fit(x_train, y_train, eval_set=[(x_train, y_train), (x_cv, y_cv)])
+model.fit(x_train, y_train, eval_set=[(x_train, y_train), (x_val, y_val)])
 
 prediction = model.predict(x_test)
 

@@ -21,12 +21,12 @@ x = data[["Temperature(°C)", "Duration(minutes)"]]
 y = data["Target"]
 
 x_train, x_temp, y_train, y_temp = train_test_split(x, y, test_size=0.4, random_state=1)
-x_cv, x_test, y_cv, y_test = train_test_split(x_temp, y_temp, test_size=0.5, random_state=1)
+x_val, x_test, y_val, y_test = train_test_split(x_temp, y_temp, test_size=0.5, random_state=1)
 del x_temp, y_temp
 
 scaler = StandardScaler()
 x_train_scaled = scaler.fit_transform(x_train)
-x_cv_scaled = scaler.transform(x_cv)
+x_cv_scaled = scaler.transform(x_val)
 x_test_scaled = scaler.transform(x_test)
 
 # create the model
@@ -44,19 +44,19 @@ model.compile(
     metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0.0)] # binary classification'da logit değerinin thresholdu 0 olduğu için thresholds=0.0 olmalı
     )
 # ham puan veririz, loss, sigmoidi içeride uygular [eğitimde bu.
-# tahmin kısmında olasılık vermesi için tf.nn.sigmoid yaptık. çünkü output layerde linear activation var]
-# (from logits demeyip output activation'u logistic yaparsak, loss fonksiyonuna doğrudan öncesinde hesaplanan olasılık gider, ham sayısal değer değil)
-# sayısal yuvarlamayı önleyip daha doğru numeric değer için output layer activation'ı sigmoidden linear'a çevirdik, compile kısmında
+# prediction kısmında olasılık vermesi için tf.nn.sigmoid yaptık. çünkü output layerde linear activation var]
+# (from logits demeyip output activation'u sigmoid yaparsak, loss fonksiyonuna doğrudan öncesinde hesaplanan olasılık gider, ham sayısal değer değil)
+# sayısal yuvarlamayı önleyip daha doğru numeric değer için output layer activation'ı sigmoidden linear'a çevirdik
 
 early_stopping = EarlyStopping(
-    monitor='val_loss',      # Takip edilecek değer (Doğrulama kaybı)
+    monitor='val_loss',      # Takip edilecek değer (validation loss)
     patience=15,             # 15 epoch boyunca hata düşmezse durdur
     mode='min',              # monitor değerinin azalmasını bekliyoruz
     restore_best_weights=True # Durduğunda, hatanın en düşük olduğu andaki ağırlıkları yükle
 )
 
 # training the model
-model.fit(x_train_scaled, y_train, epochs=180, validation_data=(x_cv_scaled, y_cv), callbacks=[early_stopping])
+model.fit(x_train_scaled, y_train, epochs=180, validation_data=(x_cv_scaled, y_val), callbacks=[early_stopping])
 
 model.evaluate(x_test_scaled, y_test)
 
