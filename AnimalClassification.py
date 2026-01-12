@@ -46,7 +46,7 @@ model = Sequential([
 # layerdeki nöronların indeksleriyle eşleştirmesinden kaynaklanıyor
 
 
-# hesaplama hızı ve vanishing gradient durumunu önlemel için hidden layerlerde sigmoid yerine relu activation function'ı kullandık
+# hesaplama hızı ve vanishing gradient durumunu önlemek için hidden layerlerde sigmoid yerine relu activation function'ı kullandık
 
 # her bir neuronun activation functionundaki weightler random initialization ile başlatıldığı için bir layerdeki aynı input vektörünü
 # alan nöronların aynı sonucu üretmesi önlenip ve farklı featureler keşfetmesi sağlanıyor
@@ -95,4 +95,5 @@ for i in range(len(probability)):
 
 #NOTE:
 # Overfitting/underfitting control was performed by monitoring the loss and accuracy values in the compile stage
+
 # Detailed performance metrics of the model (Precision, Recall, F1) were computed using the test data after training
